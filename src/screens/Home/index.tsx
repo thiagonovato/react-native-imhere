@@ -1,10 +1,17 @@
 import { Text, View, TextInput, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
+import { Participant } from '../../components/Participant';
 
 export function Home() {
   function handleParticipantAdd() {
     console.log('Voce clicou...');
   }
+
+  function handleParticipantRemove(name: string) {
+    console.log('removeu', name);
+  }
+
+  const participants = ['Thiago', 'Novato', 'Marques'];
 
   return (
     <View style={styles.container}>
@@ -13,13 +20,20 @@ export function Home() {
       <View style={styles.form}>
         <TextInput
           style={styles.input}
-          placeholder='Nome do participante'
+          placeholder='Name'
           placeholderTextColor={'#6B6B6B'}
         />
         <TouchableOpacity style={styles.button} onPress={handleParticipantAdd}>
           <Text style={styles.buttonText}>+</Text>
         </TouchableOpacity>
       </View>
+      {participants.map((participant) => (
+        <Participant
+          key={participant}
+          name={participant}
+          onRemove={() => handleParticipantRemove(participant)}
+        />
+      ))}
     </View>
   );
 }
