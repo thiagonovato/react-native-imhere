@@ -4,51 +4,64 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
+  Alert,
 } from 'react-native';
 import { styles } from './styles';
 import { Participant } from '../../components/Participant';
+import { useState } from 'react';
 
 export function Home() {
-  function handleParticipantAdd() {
-    console.log('Voce clicou...');
+  const [content, setContent] = useState<string[]>([]);
+  const [name, setName] = useState<string>('');
+
+  function handleParticipantAdd(name: string) {
+    console.log(name);
+    if (content.includes(name)) {
+      return Alert.alert('Error', `${name} already exists.`);
+    }
+    setName('');
+    setContent((prevState) => [...prevState, name]);
   }
 
   function handleParticipantRemove(name: string) {
-    console.log('removeu', name);
+    Alert.alert('Confirm?', `Do you really want to remove ${name}?`, [
+      {
+        text: 'Yes',
+        onPress: () => {
+          setContent((prevState) =>
+            prevState.filter((participant) => participant !== name)
+          );
+          setName('');
+        },
+      },
+      {
+        text: 'No',
+        style: 'cancel',
+      },
+    ]);
   }
-
-  const participants = [
-    'Thiago',
-    'Novato',
-    'Marques',
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    '10',
-  ];
 
   return (
     <View style={styles.container}>
-      <Text style={styles.eventName}>Home</Text>
-      <Text style={styles.eventDate}>Sexta, 4 de Setembro de 2023</Text>
+      <Text style={styles.eventName}>List</Text>
+      <Text style={styles.eventDate}>ToDo List</Text>
       <View style={styles.form}>
         <TextInput
+          value={name}
           style={styles.input}
           placeholder='Name'
           placeholderTextColor={'#6B6B6B'}
+          onChangeText={setName}
         />
-        <TouchableOpacity style={styles.button} onPress={handleParticipantAdd}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => handleParticipantAdd(name)}
+        >
           <Text style={styles.buttonText}>+</Text>
         </TouchableOpacity>
       </View>
       <FlatList
-        data={participants}
+        data={content}
         showsVerticalScrollIndicator={false}
         keyExtractor={(item) => item}
         renderItem={({ item }) => (
